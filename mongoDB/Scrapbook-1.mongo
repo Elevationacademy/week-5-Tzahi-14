@@ -1,0 +1,23 @@
+db.firstCollection.insert({
+    "currentBalance" : "1000",
+    "accountDetails" : {
+    "name" : "Tzahi David",
+    "accountNumber" : 1234
+    }
+})
+
+db.firstCollection.update(
+    {
+        name: "Milo"
+    },
+    {
+        $set:
+            {
+                lastName: "Shakers"
+            }
+    }
+)
+
+db.firstCollection.find({
+    
+})

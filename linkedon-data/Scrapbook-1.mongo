@@ -1,0 +1,90 @@
+db.linkedon.find({}) //or whichever operation
+
+db.linkedon.count({
+    salary: {$gt: 25000}
+    })
+
+db.linkedon.find({},{firstName: 1,salary: 1,_id:null}).sort({salary: -1,}).limit(3)
+
+// db.linkedon.find({}, {firstName: 1, salary: 1, _id: 0}).sort({salary: -1}).limit(3)
+
+db.linkedon.count({$and: [ {"currentCompany.name":"Walmart"}, {salary: {$gte: 7000 }}]})
+
+
+db.linkedon.find({$or:[{"currentCompany.industry": "Sales"},{"currentCompany.industry": "Retail"}]},{firstName: 1,lastName: 1, salary:1,"currentCompany.name":1, _id: 0}).sort({salary: -1}).limit(1)
+
+db.linkedon.count({$or:[{"currentCompany.name":"Apple"},{previousCompanies:{$elemMatch:{name:"Apple"}}}]})
+db.linkedon.count({$or: [{"currentCompany.name": "Apple"}, {previousCompanies: {$elemMatch: {name: "Apple"}}}]})
+
+// Find the number of people who have ever worked at Apple, past or present.
+db.linkedon.aggregate([
+    {$match: {"currentCompany.name": "Apple"}},
+    {
+        $group:
+        {
+            _id: "$currentCompany.industry",
+            totalPeople: {$sum: 1}
+        }
+    },
+    {$sort: {"currentCompany.industry": 1}}
+])
+
+// db.firstCollection.aggregate([
+//     { $match: { currentEmployee: true } },
+//     {
+//         $group:
+//         {
+//             _id: "$dept",
+//             totalSalaries: { $sum: "$salary" }
+//         }
+//     },
+//     { $sort: { totalSalaries: -1 } }
+// ])
+
+db.linkedon.aggregate([
+    {$match: {currentPosition: "Analyst"}},
+    {
+        $group:
+        {
+            _id:"$currentCompany.name",
+            totalAnalystSalary: {$sum: "$salary"},
+            numberOfPeople: {$sum: 1}
+        }
+    },
+    {$sort: {totalAnalystSalary: -1}}
+])
+db.linkedon.aggregate([
+    {$match: {currentPosition: "Analyst"}},
+    {
+        $group:
+        {
+            _id:"$currentCompany.name",
+            totalAnalystSalary: {$sum: 1}
+        }
+    },
+    {$sort: {totalAnalystSalary: -1}}
+])
+db.linkedon.aggregate([
+    {$match: {currentPosition: "Analyst"}},
+    {
+        $group:
+        {
+            _id:"$currentCompany.name",
+            avgSalary: {$avg: "$salary"}
+        }
+    },
+    {$sort: {totalAnalystSalary: -1}}
+])
+
+db.linkedon.aggregate([
+    {$match:{$and:[{"currentCompany.industry":"Tech"},{$or: [{"currentCompany.name":"Google"},{"currentCompany.name":"Apple"}]}]}},
+    {
+        $group:
+        {
+            _id:"$lastName",
+            avgSalary:{$avg:"$salary"}
+        }
+    },
+    { $sort: { avgSalary: -1 } }
+])
+
