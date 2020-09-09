@@ -84,3 +84,4 @@ const personSchema = new Schema({
 
 const Person = mongoose.model("person", personSchema)
 module.exports = Person
+
